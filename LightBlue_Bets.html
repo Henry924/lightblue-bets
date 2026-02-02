@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LightBlue Bets</title>
+
+<style>
+:root {
+  --blue: #5bbcff;
+  --light: #f6fbff;
+  --white: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--light);
+  color: #222;
+}
+
+nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: var(--white);
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  border-top: 1px solid #ddd;
+}
+
+nav button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--blue);
+  font-weight: 600;
+}
+
+section {
+  display: none;
+  padding: 20px;
+  padding-bottom: 80px;
+}
+
+section.active {
+  display: block;
+}
+
+h1 {
+  color: var(--blue);
+}
+
+.card {
+  background: var(--white);
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button.primary {
+  background: var(--blue);
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+/* Chatbot */
+#chatbox {
+  height: 200px;
+  overflow-y: auto;
+  background: #eef7ff;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.message {
+  margin: 6px 0;
+}
+
+.bot {
+  color: #0066aa;
+}
+
+.user {
+  text-align: right;
+}
+</style>
+</head>
+
+<body>
+
+<section id="home" class="active">
+  <h1>LightBlue Bets</h1>
+  <div class="card">
+    <p>Welcome to your small business dashboard.</p>
+  </div>
+
+  <div class="card">
+    <h3>Chat Assistant</h3>
+    <div id="chatbox"></div>
+    <input id="chatInput" placeholder="Ask me something..." />
+    <button class="primary" onclick="sendMessage()">Send</button>
+  </div>
+</section>
+
+<section id="bet">
+  <h1>Make a Bet</h1>
+  <div class="card">
+    <input id="betText" placeholder="Bet description" />
+    <input id="betAmount" type="number" placeholder="Amount" />
+    <button class="primary" onclick="saveBet()">Place Bet</button>
+  </div>
+</section>
+
+<section id="history">
+  <h1>History</h1>
+  <div class="card" id="historyList">
+    <p>No bets yet.</p>
+  </div>
+</section>
+
+<section id="settings">
+  <h1>Settings</h1>
+  <div class="card">
+    <input id="bizName" placeholder="LightBlue Bets" />
+    <button class="primary" onclick="saveSettings()">Save</button>
+  </div>
+</section>
+
+<nav>
+  <button onclick="show('home')">Home</button>
+  <button onclick="show('bet')">Make a Bet</button>
+  <button onclick="show('history')">History</button>
+  <button onclick="show('settings')">Settings</button>
+</nav>
+
+<script>
+const sections = document.querySelectorAll("section");
+const historyList = document.getElementById("historyList");
+let bets = [];
+
+function show(id) {
+  sections.forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function saveBet() {
+  const text = betText.value;
+  const amount = betAmount.value;
+  if (!text || !amount) return alert("Fill everything out!");
+  bets.push({ text, amount });
+  betText.value = "";
+  betAmount.value = "";
+  renderHistory();
+  show("history");
+}
+
+function renderHistory() {
+  historyList.innerHTML = "";
+  bets.forEach(b => {
+    historyList.innerHTML += `<p>• ${b.text} — $${b.amount}</p>`;
+  });
+}
+
+function saveSettings() {
+  alert("Settings saved!");
+}
+
+const chatbox = document.getElementById("chatbox");
+
+function sendMessage() {
+  const input = chatInput.value;
+  if (!input) return;
+  addMessage(input, "user");
+  chatInput.value = "";
+
+  setTimeout(() => {
+    let reply = "I'm here to help!";
+    if (input.toLowerCase().includes("bet")) reply = "You can make a bet in the Make a Bet tab.";
+    if (input.toLowerCase().includes("hello")) reply = "Hey there! 👋";
+    if (input.toLowerCase().includes("help")) reply = "Ask about bets, history, or settings.";
+    addMessage(reply, "bot");
+  }, 500);
+}
+
+function addMessage(text, type) {
+  const div = document.createElement("div");
+  div.className = "message " + type;
+  div.textContent = text;
+  chatbox.appendChild(div);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
+</script>
+
+</body>
+</html>
